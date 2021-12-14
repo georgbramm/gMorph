@@ -144,7 +144,7 @@ mod tests {
     #[quickcheck]
     fn multiply_matrices(a: Q231) -> bool {
         let m1: Matrix3<Q231> = a.into();
-        Q231::from(m1 * m1) == a * a
+        Q231::from(m1.clone() * m1) == a * a
     }
 
     #[quickcheck]

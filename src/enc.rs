@@ -22,14 +22,14 @@ impl Enc {
     #[inline]
     fn enc(key_pair: &KeyPair, value: u32) -> Self {
         let enc: Matrix3<_> = Q231::from(Mod231::from(value)).into();
-        let inner = key_pair.forwards * enc * key_pair.backwards;
+        let inner = key_pair.public * enc * key_pair.private;
 
         Self { inner }
     }
 
     #[inline]
     fn dec(&self, key_pair: &KeyPair) -> u32 {
-        let dec = key_pair.backwards * self.inner * key_pair.forwards;
+        let dec = key_pair.private * self.inner * key_pair.public;
         dec[0].w.0
     }
 }
@@ -81,8 +81,8 @@ impl MulAssign for Enc {
 /// and decrypting data
 #[derive(Debug, Serialize, Deserialize)]
 pub struct KeyPair {
-    forwards: Matrix3<Q231>,
-    backwards: Matrix3<Q231>,
+    pub public: Matrix3<Q231>,
+    pub private: Matrix3<Q231>,
 }
 
 impl KeyPair {
@@ -99,8 +99,8 @@ impl KeyPair {
         }
 
         Self {
-            forwards,
-            backwards: maybe_backwards.unwrap(),
+            public: forwards,
+            private: maybe_backwards.unwrap(),
         }
     }
 }
@@ -173,8 +173,8 @@ mod tests {
     fn identity() {
         let key_pair = KeyPair::default();
         assert_eq!(
-            key_pair.forwards * key_pair.backwards,
-            key_pair.backwards * key_pair.forwards
+            key_pair.public.clone() * key_pair.private.clone(),
+            key_pair.private * key_pair.public
         )
     }
 

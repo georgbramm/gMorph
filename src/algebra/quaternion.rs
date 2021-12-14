@@ -10,7 +10,7 @@ use std::ops::{Add, AddAssign, Deref, DerefMut, Mul, MulAssign, Neg, Sub, SubAss
 
 /// Quaternion over a ring mod N
 #[derive(Copy, Clone, PartialEq, Serialize, Deserialize)]
-pub(crate) struct QuaternionM<T>
+pub struct QuaternionM<T>
 where
     T: Ring + fmt::Debug + Copy + Invertible + 'static,
 {
